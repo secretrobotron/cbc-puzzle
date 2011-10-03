@@ -59,11 +59,13 @@ var Cbc = window.Cbc = function( target, itemBox, timeline ) {
       options = playingEvents[ children.item( playingIndex ).children.item( 0 ).id ];
       audioElement.currentTime = options.start;
       audioElement.play();
+      addClass( children.item( playingIndex ), "cbc-puzzle-playing" );
     }
     
     if ( options ) {
       requestAnimFrame( function() {
-        ridinSpinnas( options, function() {
+        ridinSpinnas( options, function() {   
+          removeClass( children.item( playingIndex ), "cbc-puzzle-playing" );
           playingIndex++;
           if ( playingIndex >= itemsLength ) {
             playingIndex = 0;
