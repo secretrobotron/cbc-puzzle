@@ -30,10 +30,63 @@
             rect = targ.getClientRects()[ 0 ],
             left = 0,
             start = 0,
-            end = 0;
+            end = 0,
+            handles = {
+              left: document.createElement( "div" ),
+              right: document.createElement( "div" )
+            },
+            elemRect;
 
         elem.className = "time-block no-select";
         elem.id = "timeblock-" + timeBlocks.length;
+
+        handles.left.className = handles.right.className = "handles no-select";
+        elem.appendChild( handles.left );
+        elem.appendChild( handles.right );
+        handles.left.style.left = "0px";
+        handles.right.style.right = "0px";
+
+        var addHandleListeners = function() {
+
+          //  Left
+          handles.left.moving = false;
+
+          var leftHandle_md = function(){
+            elemRect = elem.getClientRects()[0];
+            lastLeft = elemRect.left;
+            handles.left.moving = true;
+            window.addEventListener( "mousemove", leftHandle_mm, false );
+            window.addEventListener( "mouseup", leftHandle_mu, false );
+          };
+          var leftHandle_mm = function( event ){
+            if ( handles.left.moving ) {
+              var newLeft = ( event.clientX - mouseOffset );
+              if ( newLeft >= 0 && newLeft < ( elemRect.left + elemRect.width ) ) {
+                elem.left = newLeft + "px"
+                left = newLeft;
+              }
+            }
+          };
+          var leftHandle_mu = function(){
+            handles.left.moving = false;
+            window.removeEventListener( "mousemove", leftHandle_mm, false );
+            window.removeEventListener( "mouseup", leftHandle_mu, false );
+            start = ( left / rect.width ) * duration;
+          };
+
+          handles.left.addEventListener( "mousedown", leftHandle_md, false );
+
+          //  Right
+          var rightHandle_md = function(){
+
+          };
+          var rightHandle_mm = function(){
+
+          };
+          var rightHandle_mu = function(){
+
+          };
+        };
 
         var updateSize = function() {
           elem.style.width = ( ( rect.width / duration ) * ( audio.currentTime - start ) ) + "px";
@@ -129,6 +182,8 @@
         self.setLeft( ( ( audio.currentTime / duration ) * rect.width ) );
 
         self.appendTo( targ );
+        addHandleListeners();
+
         audio.addEventListener( "timeupdate", timeUpdate, false );
         window.addEventListener( "keyup", keyUp, false );
         audio.play();
