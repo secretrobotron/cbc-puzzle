@@ -144,7 +144,7 @@
               var newWidth = event.clientX - elemRect.left;
 
               console.log(newWidth);
-              if ( newWidth > 0 && elemRect.left + newWidth + 8 <= rect.width ) {
+              if ( newWidth > 0 && (elemRect.left + newWidth) - 6 <= rect.width ) {
                 elem.style.width = newWidth + "px";
               }
             }
