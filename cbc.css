@@ -5,6 +5,18 @@
           user-select: none;
 }
 
-#target div {
-  
+.cbc-puzzle-unhighlight {
+  background-color: #c0c0c0;
 }
+.cbc-puzzle-highlight {
+  background-color: gold;
+}
+
+.cbc-puzzle-event {
+  width: 65px;
+  height: 44px;
+  margin-left: 3px;
+  margin-right 3px;
+  text-align: center;
+}
+

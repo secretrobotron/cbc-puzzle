@@ -1,7 +1,7 @@
 <html>
   <head>
     <script src="cbc.js"></script>
-    <link src="cbc.css"></link>
+    <link rel="stylesheet" href="cbc.css"></link>
     <script>
       document.addEventListener( "DOMContentLoaded", function( event ) {
 
@@ -16,6 +16,11 @@
           end: 16,
           text: "SECOND"
         });
+        var event3 = cbc.registerEvent({
+          start: 5,
+          end: 9,
+          text: "event3Number2middle"
+        });
       }, false );
     </script>
   <head>
@@ -23,12 +28,12 @@
 
     <div id="target" style="width:200px;height:200px;border:solid;">
     </div>
-    <div id="items" style="width:500px;border:solid">
+    <div id="items" style="width:500px;height:400px;border:solid">
     </div>
   <audio id='audio' data-timeline-sources="data/parserData.json" controls>
     <source src="../popcorn-js/test/italia.mp4" type='audio/mp4; codecs="mp4a.40.2"'>
     <source src="../popcorn-js/test/italia.ogg" type='audio/ogg; codecs="vorbis"'>
   </audio>
-
+  <button id="play">PLAY</button>
   </body>
 </html>
