@@ -7,6 +7,11 @@
       margin-top: 0p;
       border: 0.5px solid black;
       opacity: 0.4;
+      user-select: none;
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      -o-user-select: none;
     }
     .scrubber {
       width: 2px;
@@ -22,7 +27,7 @@
     <script src="editor.js" ></script>
   </head>
   <body>
-    <audio src="McLuhan-quote1.oga" id="audio" preload="auto" controls style="width: 400px; visibility: hidden;" ></audio>
+    <audio src="McLuhan-quote1.oga" id="audio" preload="auto" style="width: 400px; visibility: hidden;" ></audio>
     <br />
 
     <div id="targ" style="height: 50px; width: 400px; position: relative;" >

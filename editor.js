@@ -4,23 +4,27 @@
     var timeBlocks = [],
         targ = document.getElementById( "targ" ),
         audio = document.getElementById( "audio" ),
-        duration;
+        duration,
+        moving = false,
+        mouseOffset = 0,
+        lastLeft = 0;
 
     var Block = function() {
 
         var self = this,
             elem = document.createElement( "div" ),
             rect = targ.getClientRects()[ 0 ],
-            left = 0,
-            start = 0
-            end = 0;
+            left = 0;
+
+        this.start = 0
+        this.end = 0;
 
         elem.className = "time-block";
         elem.id = "timeblock-" + timeBlocks.length;
 
         var updateSize = function() {
-          elem.style.width = ( ( rect.width / duration ) * ( audio.currentTime - start ) ) + "px";
-          end = audio.currentTime;
+          elem.style.width = ( ( rect.width / duration ) * ( audio.currentTime - self.start ) ) + "px";
+          self.end = audio.currentTime;
         };
 
         this.setLeft = function( val ) {
@@ -29,11 +33,8 @@
           }
 
           elem.style.left = val + "px";
-
-          left = val;
-          start = audio.currentTime;
-
-          return self;
+          lastLeft = val;
+          self.start = audio.currentTime;
         };
 
         this.appendTo = function( element ) {
@@ -44,18 +45,20 @@
         };
 
         var clicked = function() {
+          if ( lastLeft === elem.style.left ) {
+            var checkTime = function() {
+              if ( audio.currentTime >= self.end ) {
+                audio.pause();
+                audio.removeEventListener( "timeupdate", checkTime, false );
+                audio.currentTime = self.end;
+              }
+            };
 
-          var checkTime = function() {
-            if ( audio.currentTime >= end ) {
-              audio.pause();
-              audio.removeEventListener( "timeupdate", checkTime, false );
-            }
-          };
+            audio.addEventListener( "timeupdate", checkTime, false );
 
-          audio.addEventListener( "timeupdate", checkTime, false );
-
-          audio.currentTime = start;
-          audio.play();
+            audio.currentTime = self.start;
+            audio.play();
+          }
         };
 
         var timeUpdate = function() {
@@ -74,7 +77,34 @@
           }
         };
 
+        var mouseMove = function( event ) {
+          if ( moving ) {
+
+            elem.style.left = ( event.clientX - mouseOffset ) + "px"
+          }
+        };
+
+        var getOffset = function( clientX ) {
+
+          return clientX - elem.getClientRects()[0].left;
+        };
+
+        var mouseDown = function( event ) {
+          moving = true;
+          lastLeft = elem.style.left;
+          mouseOffset = getOffset( event.clientX );
+          elem.addEventListener( "mousemove", mouseMove, false );
+          window.addEventListener( "mouseup", mouseUp, false );
+        };
+
+        var mouseUp = function( e ) {
+          moving = false;
+          elem.removeEventListener( "mousemove", mouseMove, false );
+          window.removeEventListener( "mouseup", mouseUp, false );
+        };
+
         elem.addEventListener( "click", clicked, false );
+        elem.addEventListener( "mousedown", mouseDown, false );
 
         self.setLeft( ( ( audio.currentTime / duration ) * rect.width ) );
 
