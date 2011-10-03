@@ -1,4 +1,17 @@
 (function() {
+
+  // Thanks Paul Irish :)
+  var requestAnimFrame = (function(){
+    return  window.requestAnimationFrame       ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame    ||
+            window.oRequestAnimationFrame      ||
+            window.msRequestAnimationFrame     ||
+            function(/* function */ callback, /* DOMElement */ element){
+              window.setTimeout(callback, 1000 / 60);
+            };
+  })();
+
   document.addEventListener( "DOMContentLoaded", function(){
 
     var timeBlocks = [],
@@ -7,24 +20,24 @@
         duration,
         moving = false,
         mouseOffset = 0,
-        lastLeft = 0;
+        lastLeft = 0,
+        elemRect;
 
     var Block = function() {
 
         var self = this,
             elem = document.createElement( "div" ),
             rect = targ.getClientRects()[ 0 ],
-            left = 0;
+            left = 0,
+            start = 0,
+            end = 0;
 
-        this.start = 0
-        this.end = 0;
-
-        elem.className = "time-block";
+        elem.className = "time-block no-select";
         elem.id = "timeblock-" + timeBlocks.length;
 
         var updateSize = function() {
-          elem.style.width = ( ( rect.width / duration ) * ( audio.currentTime - self.start ) ) + "px";
-          self.end = audio.currentTime;
+          elem.style.width = ( ( rect.width / duration ) * ( audio.currentTime - start ) ) + "px";
+          end = audio.currentTime;
         };
 
         this.setLeft = function( val ) {
@@ -33,8 +46,8 @@
           }
 
           elem.style.left = val + "px";
-          lastLeft = val;
-          self.start = audio.currentTime;
+          lastLeft = left = val;
+          start = audio.currentTime;
         };
 
         this.appendTo = function( element ) {
@@ -45,18 +58,18 @@
         };
 
         var clicked = function() {
-          if ( lastLeft === elem.style.left ) {
+          if ( lastLeft === left ) {
             var checkTime = function() {
-              if ( audio.currentTime >= self.end ) {
+              if ( audio.currentTime >= end ) {
                 audio.pause();
                 audio.removeEventListener( "timeupdate", checkTime, false );
-                audio.currentTime = self.end;
+                audio.currentTime = end;
               }
             };
 
             audio.addEventListener( "timeupdate", checkTime, false );
 
-            audio.currentTime = self.start;
+            audio.currentTime = start;
             audio.play();
           }
         };
@@ -79,8 +92,11 @@
 
         var mouseMove = function( event ) {
           if ( moving ) {
-
-            elem.style.left = ( event.clientX - mouseOffset ) + "px"
+            var newLeft = ( event.clientX - mouseOffset );
+            if ( newLeft >= 0 && newLeft + elemRect.width <= rect.width ) {
+              elem.style.left = newLeft + "px";
+              left = newLeft;
+            }
           }
         };
 
@@ -90,17 +106,21 @@
         };
 
         var mouseDown = function( event ) {
+
           moving = true;
-          lastLeft = elem.style.left;
+          lastLeft = left;
+          elemRect = elem.getClientRects()[0];
           mouseOffset = getOffset( event.clientX );
-          elem.addEventListener( "mousemove", mouseMove, false );
+          window.addEventListener( "mousemove", mouseMove, false );
           window.addEventListener( "mouseup", mouseUp, false );
         };
 
         var mouseUp = function( e ) {
           moving = false;
-          elem.removeEventListener( "mousemove", mouseMove, false );
+          window.removeEventListener( "mousemove", mouseMove, false );
           window.removeEventListener( "mouseup", mouseUp, false );
+          start = ( left / rect.width ) * duration;
+          end = ( ( left + elem.getClientRects()[0].width ) / rect.width ) * duration;
         };
 
         elem.addEventListener( "click", clicked, false );
@@ -119,10 +139,12 @@
     var Scrubber = function() {
 
       var elem = document.createElement( "div" ),
-          rect = targ.getClientRects()[ 0 ];
+          rect = targ.getClientRects()[ 0 ],
+          moving = false,
+          elemRect;
 
       elem.id = "scrubber";
-      elem.className = "scrubber"
+      elem.className = "scrubber no-select"
       elem.style.left = 0;
 
       targ.appendChild( elem );
@@ -131,9 +153,38 @@
         elem.style.left = ( ( audio.currentTime / duration ) * rect.width ) + "px";
       };
 
-      audio.addEventListener( "timeupdate", function() {
+      var mouseDown = function() {
+        moving = true;
+        elemRect = elem.getClientRects()[ 0 ];
+        window.addEventListener( "mousemove", mouseMove, false );
+        window.addEventListener( "mouseup", mouseUp, false );
+        audio.removeEventListener( "timeupdate", updatePosition, false );
+
+      };
+
+      var mouseMove = function( event ) {
+        if ( moving ) {
+          var newLeft = ( event.clientX - rect.left );
+          if ( newLeft >= 0 && newLeft + elemRect.width <= rect.width ) {
+            elem.style.left = ( event.clientX - rect.left ) + "px";
+            audio.currentTime = ( elem.getClientRects()[0].left / ( rect.width - rect.left ) ) * duration;
+          }
+        }
+      };
+
+      var mouseUp = function() {
+        moving = false;
+        window.removeEventListener( "mouseup", mouseUp, false );
+        window.removeEventListener( "mousemove", mouseMove, false );
+        audio.addEventListener( "timeupdate", updatePosition, false );
+        audio.pause();
         updatePosition();
-      }, false);
+
+      };
+
+      elem.addEventListener( "mousedown", mouseDown, false );
+
+      audio.addEventListener( "timeupdate", updatePosition, false);
 
       return this;
     };
@@ -173,7 +224,50 @@
       //  end audioLoaded() block
     }
 
-    audio.addEventListener( "canplaythrough", audioLoaded, false );
+    (function() {
+      var audio = document.getElementById( 'audio' ),
+          canvas = document.getElementById( 'audio-canvas' ),
+          ctx = canvas.getContext( '2d' ),
+          cw = canvas.width, ch = canvas.height, ci = 0;
+
+      ctx.fillStyle = "#c0c0c0";
+      ctx.fillRect( 0, 0, cw, ch );
+      ctx.translate( 0, ch/2 );
+
+      audio.addEventListener( 'loadedmetadata', function( e ) {
+        var channels = audio.mozChannels,
+            rate = audio.mozSampleRate,
+            frameBufferLength = audio.mozFrameBufferLength,
+            stepx = cw / Math.ceil( audio.duration * rate / frameBufferLength * channels ) / ( frameBufferLength );
+
+        function audioAvailable( event ) {
+          var samples = event.frameBuffer;
+              time = event.time;
+
+          ctx.fillStyle = "#000000";
+          ctx.beginPath();
+          for (var i = 0; i < frameBufferLength; i++) {
+            var s = samples[ i ]/2 * 50;
+            ctx.rect( ci, -s, 1, s );
+            ci += stepx;
+          } //for
+          ctx.fill();
+        } //audioAvailable
+
+        function canplaythrough( e ) {
+          audio.removeEventListener( 'canplaythrough', canplaythrough, false );
+          audio.addEventListener( 'MozAudioAvailable', audioAvailable, false );
+          audio.play();
+          function ended( e ) {
+            audio.removeEventListener( 'ended', ended, false );
+            document.getElementById( 'prepare-div' ).style.display = "none";
+            audioLoaded( e );
+          }
+          audio.addEventListener( 'ended', ended, false );
+        }
+        audio.addEventListener( 'canplaythrough', canplaythrough, false );
+      }, false );
+    })();
 
   //  end DOMContentLoaded Block
   }, false );
