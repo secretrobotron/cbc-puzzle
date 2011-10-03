@@ -23,6 +23,57 @@
         lastLeft = 0,
         elemRect;
 
+    (function() {
+      var playCanvas = document.getElementById( 'play-canvas' ),
+          pauseCanvas = document.getElementById( 'pause-canvas' ),
+          playCtx = playCanvas.getContext( '2d' ),
+          pauseCtx = pauseCanvas.getContext( '2d' ),
+          ctx, w, h;
+
+      w = playCanvas.width;
+      h = playCanvas.height;
+      ctx = playCtx;
+      ctx.clearRect( 0, 0, w, h );
+      ctx.fillStyle = "#333";
+      ctx.beginPath();
+      ctx.moveTo( 0, 0 );
+      ctx.lineTo( 0, h );
+      ctx.lineTo( w, h/2 );
+      ctx.lineTo( 0, 0 );
+      ctx.fill();
+
+      w = playCanvas.width;
+      h = playCanvas.height;
+      ctx = pauseCtx;
+      ctx.clearRect( 0, 0, w, h );
+      ctx.fillStyle = "#333";
+      ctx.beginPath();
+      ctx.moveTo( w/4, 0 );
+      ctx.lineTo( w/4, h );
+      ctx.lineTo( 2*w/4, h );
+      ctx.lineTo( 2*w/4, 0 );
+      ctx.lineTo( w/4, 0 );
+
+      ctx.moveTo( 3*w/4, 0 );
+      ctx.lineTo( 3*w/4, h );
+      ctx.lineTo( w, h );
+      ctx.lineTo( w, 0 );
+      ctx.lineTo( w, 0 );
+      ctx.fill();
+
+      playCanvas.addEventListener( 'click', function( e ) {
+        audio.play();
+        playCanvas.style.display = "none";
+        pauseCanvas.style.display = "block";
+      }, false );
+      pauseCanvas.addEventListener( 'click', function( e ) {
+        audio.pause();
+        playCanvas.style.display = "block";
+        pauseCanvas.style.display = "none";
+      }, false );
+      
+    })();
+
     var Block = function() {
 
         var self = this,
@@ -34,6 +85,14 @@
 
         elem.className = "time-block no-select";
         elem.id = "timeblock-" + timeBlocks.length;
+
+        var editorInput = document.createElement( "input" );
+        editorInput.setAttribute( "type", "text" );
+        document.getElementById( 'editor' ).appendChild( editorInput );
+
+        Object.defineProperty( this, "element", {
+          get: function() { return elem; }
+        });
 
         var updateSize = function() {
           elem.style.width = ( ( rect.width / duration ) * ( audio.currentTime - start ) ) + "px";
@@ -123,7 +182,58 @@
           end = ( ( left + elem.getClientRects()[0].width ) / rect.width ) * duration;
         };
 
-        elem.addEventListener( "click", clicked, false );
+        function addClass( element, name ) {
+          var classes = element.className.split( " " ),
+              idx = classes.indexOf( name );
+          if ( idx === -1 ) {
+            element.className += " " + name;
+          }
+        }
+        function removeClass( element, name ) {
+          var classes = element.className.split( " " ),
+              idx = classes.indexOf( name );
+          if ( idx > -1 ) {
+            classes.splice( idx, 1 );
+          }
+          element.className = classes.join( " " );
+        }
+
+        var editMode = false;
+
+        function toggleEditMode( state ) {
+          if ( state ) {
+            editorInput.style.display = "block";
+            editorInput.focus();
+          }
+          else {
+            editorInput.style.display = "none";
+          }
+          editMode = state;
+        } //toggleEditMode
+
+        function keyPress( e ) {
+          if ( e.which === 13 ) {
+            toggleEditMode( !editMode );
+          }
+        } //keyDown
+
+        this.select = function() {
+          addClass( elem, "time-block-highlight" );
+          window.addEventListener( 'keypress', keyPress, false );
+        };
+
+        this.deselect = function() {
+          removeClass( elem, "time-block-highlight" );
+          window.removeEventListener( 'keypress', keyPress, false );
+        };
+
+        elem.addEventListener( "click", function( e ) {
+          for ( var i=0; i<timeBlocks.length; ++i ) {
+            timeBlocks[ i ].deselect();
+          }
+          self.select();
+        }, false );
+        elem.addEventListener( "dblclick", clicked, false );
         elem.addEventListener( "mousedown", mouseDown, false );
 
         self.setLeft( ( ( audio.currentTime / duration ) * rect.width ) );
@@ -132,6 +242,16 @@
         audio.addEventListener( "timeupdate", timeUpdate, false );
         window.addEventListener( "keyup", keyUp, false );
         audio.play();
+
+        Object.defineProperty( this, "output", {
+          get: function() {
+            return {
+              text: editorInput.value,
+              start: start,
+              end: end
+            };
+          }
+        });
 
       return this;
     };
@@ -260,6 +380,7 @@
           audio.play();
           function ended( e ) {
             audio.removeEventListener( 'ended', ended, false );
+            document.getElementById( 'play-canvas' ).style.display = "block";
             document.getElementById( 'prepare-div' ).style.display = "none";
             audioLoaded( e );
           }
@@ -268,6 +389,15 @@
         audio.addEventListener( 'canplaythrough', canplaythrough, false );
       }, false );
     })();
+
+    document.getElementById( 'output-render' ).addEventListener( 'click', function( e ) {
+      var textArea = document.getElementById( 'output-textarea' ),
+          outputObj = [];
+      for ( var i=0; i<timeBlocks.length; ++i ) {
+        outputObj.push( timeBlocks[ i ].output );
+      }
+      textArea.value = JSON.stringify( outputObj );
+    }, false );
 
   //  end DOMContentLoaded Block
   }, false );
