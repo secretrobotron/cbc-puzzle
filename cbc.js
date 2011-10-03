@@ -74,6 +74,7 @@ var Cbc = function( target, timeline, itemBox ) {
    var newItem = document.getElementById( event.dataTransfer.getData( "Text" ) );
    newItem.style.left = "20px";
    this.appendChild( newItem );
+  }, false );
 
     itemBoxElement.appendChild( innerDiv ); 
 
