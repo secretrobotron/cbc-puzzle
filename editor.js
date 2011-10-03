@@ -1,4 +1,17 @@
 (function() {
+
+  // Thanks Paul Irish :)
+  var requestAnimFrame = (function(){
+    return  window.requestAnimationFrame       || 
+            window.webkitRequestAnimationFrame || 
+            window.mozRequestAnimationFrame    || 
+            window.oRequestAnimationFrame      || 
+            window.msRequestAnimationFrame     || 
+            function(/* function */ callback, /* DOMElement */ element){
+              window.setTimeout(callback, 1000 / 60);
+            };
+  })();
+
   document.addEventListener( "DOMContentLoaded", function(){
 
     var timeBlocks = [],
@@ -143,7 +156,50 @@
       //  end audioLoaded() block
     }
 
-    audio.addEventListener( "canplaythrough", audioLoaded, false );
+    (function() {
+      var audio = document.getElementById( 'audio' ),
+          canvas = document.getElementById( 'audio-canvas' ),
+          ctx = canvas.getContext( '2d' ),
+          cw = canvas.width, ch = canvas.height, ci = 0;
+
+      ctx.fillStyle = "#c0c0c0";
+      ctx.fillRect( 0, 0, cw, ch );
+      ctx.translate( 0, ch/2 );
+
+      audio.addEventListener( 'loadedmetadata', function( e ) {
+        var channels = audio.mozChannels,
+            rate = audio.mozSampleRate,
+            frameBufferLength = audio.mozFrameBufferLength,
+            stepx = cw / Math.ceil( audio.duration * rate / frameBufferLength * channels ) / ( frameBufferLength );
+
+        function audioAvailable( event ) {
+          var samples = event.frameBuffer;
+              time = event.time;
+
+          ctx.fillStyle = "#000000";
+          ctx.beginPath();
+          for (var i = 0; i < frameBufferLength; i++) {
+            var s = samples[ i ]/2 * 50;
+            ctx.rect( ci, -s, 1, s );
+            ci += stepx;
+          } //for
+          ctx.fill();
+        } //audioAvailable
+        
+        function canplaythrough( e ) {
+          audio.removeEventListener( 'canplaythrough', canplaythrough, false );
+          audio.addEventListener( 'MozAudioAvailable', audioAvailable, false );
+          audio.play();
+          function ended( e ) {
+            audio.removeEventListener( 'ended', ended, false );
+            document.getElementById( 'prepare-div' ).style.display = "none";
+            audioLoaded( e );
+          }
+          audio.addEventListener( 'ended', ended, false );
+        }
+        audio.addEventListener( 'canplaythrough', canplaythrough, false );
+      }, false );
+    })();
 
   //  end DOMContentLoaded Block
   }, false );
