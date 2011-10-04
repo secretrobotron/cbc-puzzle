@@ -62,8 +62,8 @@ var Cbc = window.Cbc = function( target, itemBox, timeline ) {
   };
 
   var ridinSpinnas = function( options, cb ) {
-
-    if ( audioElement.currentTime >= options.end ) {
+console.log( "NUTS", audioElement.currentTime, options.end );
+    if ( audioElement.currentTime >= options.end || audioElement.currentTime === audioElement.duration ) {
       cb && cb();
     } else if ( !stopSpinnin ) {
       requestAnimFrame( function(){
@@ -75,9 +75,8 @@ var Cbc = window.Cbc = function( target, itemBox, timeline ) {
   var getNextChild = function( children ) {
   
     var increment = function() {
-
       playingIndex++;
-      if ( playingIndex >= itemsLength ) { 
+      if ( playingIndex  >= itemsLength ) { 
         audioElement.pause();
         playingIndex = 0;
       } else { 
@@ -123,7 +122,9 @@ var Cbc = window.Cbc = function( target, itemBox, timeline ) {
         stopSpinnin = false,
         childsChild;
 
-    sortedEvents.sort();
+    sortedEvents = sortedEvents.sort( function(a,b) {
+      return a > b;
+    });
 
     for ( var i = 0; i < events.length; i++ ) {
 
