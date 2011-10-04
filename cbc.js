@@ -26,7 +26,7 @@ var addClass = function( element, name ) {
   var classes = element.className.split( " " ),
       idx = classes.indexOf( name );
   if ( idx === -1 ) {
-    element.className += " " + name;
+    element.className += name + " ";
   }
 };
 
@@ -45,7 +45,21 @@ var Cbc = window.Cbc = function( target, itemBox, timeline ) {
       playingEvents = this.playingEvents = {},
       playingIndex = 0,
       stopSpinnin = false,
-      lastEnd;
+      lastEnd,
+      self = this;
+
+  this.loadFromJSON = function( blob ) {
+
+    if ( !blob ) {
+      return;
+    }
+
+    for ( var i = 0, len = blob.length; i < len; i++ ) {
+      var track = blob[ i ];
+      self.registerEvent( blob[ i ] );
+    }
+
+  };
 
   var ridinSpinnas = function( options, cb ) {
 
@@ -88,7 +102,7 @@ var Cbc = window.Cbc = function( target, itemBox, timeline ) {
       audioElement.play();
       addClass( currentNode, "cbc-puzzle-playing" );
     }
-    
+
     if ( options ) {
 
       requestAnimFrame( function() {
@@ -113,7 +127,7 @@ var Cbc = window.Cbc = function( target, itemBox, timeline ) {
 
     for ( var i = 0; i < events.length; i++ ) {
 
-      childsChild = children[ i ].children.item( 0 ).id;
+      childsChild = children[ i ].children.length && children[ i ].children.item( 0 ).id;
 
       if ( children[ i ].children.length && playingEvents[ childsChild ].start === sortedEvents[ i ] ) {
         correctItems++;
@@ -130,15 +144,16 @@ var Cbc = window.Cbc = function( target, itemBox, timeline ) {
     } 
 
     playingIndex = 0;
+    var children = timelineElement.children;
     getNextChild( children );
   }, false );
 
   itemBoxElement.addEventListener( "drop", function( event ) {
-   
-   event.preventDefault && event.preventDefault();
-   event.stopPropagation && event.stopPropagation();
-   var newItem = document.getElementById( event.dataTransfer.getData( "Text" ) );
-   this.appendChild( newItem );
+
+    event.preventDefault && event.preventDefault();
+    event.stopPropagation && event.stopPropagation();
+    var newItem = document.getElementById( event.dataTransfer.getData( "Text" ) );
+    this.appendChild( newItem );
   }, false );
 
   itemBoxElement.addEventListener( "dragover", function( event ) {
@@ -155,9 +170,9 @@ var Cbc = window.Cbc = function( target, itemBox, timeline ) {
       options.pauseMe = false;
       audioElement.pause();
     };
-  
+
     var animloop = function() {
-      
+
       if ( options.pauseMe && audioElement.currentTime >= options.end ) {
         options.stop();
       } else if ( options.pauseMe ) {
@@ -186,13 +201,13 @@ var Cbc = window.Cbc = function( target, itemBox, timeline ) {
 
     innerDiv.addEventListener( "dragover", function( event ) {
 
-      addClass( this, "cbc-puzzle-highlight" ); 
+      addClass( this, "cbc-puzzle-highlight" );
       event.preventDefault && event.preventDefault();
       event.dataTransfer.dropeffect = "copy";
     }, false );
 
     innerDiv.addEventListener( "dragleave", function( event ) {
-  
+
       removeClass( this, "cbc-puzzle-highlight" );
     }, false);
 
@@ -200,6 +215,7 @@ var Cbc = window.Cbc = function( target, itemBox, timeline ) {
     innerDiv.addEventListener( "drop", function( event ) {
 
       event.preventDefault && event.preventDefault();
+
       removeClass( this, "cbc-puzzle-highlight" );
       event.stopPropagation && event.stopPropagation();
       if ( this.innerHTML === "" ) {
@@ -210,7 +226,7 @@ var Cbc = window.Cbc = function( target, itemBox, timeline ) {
       }
     }, false );
 
-    timelineElement.appendChild( innerDiv ); 
+    timelineElement.appendChild( innerDiv );
 
     eventDiv.addEventListener( "click", function( event ) {
 
@@ -229,7 +245,7 @@ var Cbc = window.Cbc = function( target, itemBox, timeline ) {
     eventDiv.draggable = true;
 
     eventDiv.addEventListener( "dragstart", function( event ) {
-      
+
       event.dataTransfer.effectAllowed = "copy";
       event.dataTransfer.setData( "Text", this.id );
     }, false );

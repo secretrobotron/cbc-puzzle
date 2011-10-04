@@ -1,4 +1,4 @@
-#targ {
+#container {
   height: 100px;
   width: 500px;
   position: relative;
@@ -40,7 +40,7 @@
   -o-user-select: none;
 }
 
-.scrubber:hover{
+.scrubber:hover {
   cursor: pointer;
 }
 

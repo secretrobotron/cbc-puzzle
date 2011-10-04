@@ -6,7 +6,8 @@
       document.addEventListener( "DOMContentLoaded", function( event ) {
 
         var cbc = new Cbc( "audio", "items", "target" );
-        var event1 = cbc.registerEvent({
+        var jsonBlob = [{"text":"a monk","start":0,"end":2.0798117906708677},{"text":"asked bosan","start":2.020145,"end":4.158367159158264},{"text":"what is buddha","start":4.098217621829132,"end":7.9083767608165285},{"text":"masagin","start":10.983062,"end":15.03684761164566},{"text":"tosan says","start":7.9083767608165285,"end":10.974676349158264}];
+        /*var event1 = cbc.registerEvent({
           start: 1,
           end: 5,
           text: "First"
@@ -20,7 +21,8 @@
           start: 5,
           end: 9,
           text: "event3Number2middle"
-        });
+        });*/
+        cbc.loadFromJSON( jsonBlob );
       }, false );
     </script>
   <head>
@@ -30,9 +32,7 @@
     </div>
     <div id="items" style="width:500px;height:400px;border:solid">
     </div>
-  <audio id='audio' data-timeline-sources="data/parserData.json" controls>
-    <source src="../popcorn-js/test/italia.mp4" type='audio/mp4; codecs="mp4a.40.2"'>
-    <source src="../popcorn-js/test/italia.ogg" type='audio/ogg; codecs="vorbis"'>
+  <audio id='audio' src="sample.oga" controls>
   </audio>
   <button id="play">PLAY</button>
   </body>
