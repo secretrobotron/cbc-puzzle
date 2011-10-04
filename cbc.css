@@ -16,6 +16,10 @@
   background-color: blue;
 }
 
+.cbc-puzzle-correctNode {
+  background-color: green;
+}
+
 .cbc-puzzle-event {
   width: 65px;
   height: 44px;
