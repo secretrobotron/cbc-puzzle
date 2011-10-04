@@ -62,7 +62,7 @@ var Cbc = window.Cbc = function( target, itemBox, timeline ) {
   };
 
   var ridinSpinnas = function( options, cb ) {
-console.log( "NUTS", audioElement.currentTime, options.end );
+
     if ( audioElement.currentTime >= options.end || audioElement.currentTime === audioElement.duration ) {
       cb && cb();
     } else if ( !stopSpinnin ) {
