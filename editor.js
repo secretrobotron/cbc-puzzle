@@ -143,7 +143,6 @@
             if ( handles.right.moving ) {
               var newWidth = event.clientX - elemRect.left;
 
-              console.log(newWidth);
               if ( newWidth > 0 && (elemRect.left + newWidth) - 6 <= rect.width ) {
                 elem.style.width = newWidth + "px";
               }
@@ -154,7 +153,7 @@
             handles.right.moving = false;
             window.removeEventListener( "mousemove", rightHandle_mm, false );
             window.removeEventListener( "mouseup", rightHandle_mu, false );
-            end = ( ( left + elemRect.width ) / rect.width ) * duration;
+            end = ( ( left + elem.getClientRects()[0].width ) / rect.width ) * duration;
           };
           handles.right.addEventListener( "mousedown", rightHandle_md, false );
 
