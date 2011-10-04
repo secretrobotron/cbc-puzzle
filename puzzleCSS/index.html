@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<title>PAGE TITLE HERE</title>
+
+<link rel="stylesheet" type="text/css" href="styles/layout.css" />
+<link rel="stylesheet" type="text/css" href="../cbc.css" />
+<script src="../cbc.js"></script>
+
+<script>
+  document.addEventListener( "DOMContentLoaded", function( event ) {
+
+    var cbc = new Cbc( "audio", "wordMix", "wordTarget" );
+    var jsonBlob = [{"text":"a monk","start":0,"end":2.0798117906708677},{"text":"asked bosan","start":2.020145,"end":4.158367159158264},{"text":"what is buddha","start":4.098217621829132,"end":7.9083767608165285},{"text":"masagin","start":10.983062,"end":15.03684761164566},{"text":"tosan says","start":7.9083767608165285,"end":10.974676349158264},{"text":"masagin","start":10.983062,"end":15.03684761164566},{"text":"tosan says","s    tart":7.9083767608165285,"end":10.974676349158264}];
+    cbc.loadFromJSON( jsonBlob );
+  }, false );
+</script>
+</head>
+
+<body>
+
+<div id="puzzleWrap">
+	
+  <div id="wordMix">
+	</div>
+	
+  <div id="wordTarget">
+	</div>
+	
+	<div id="timer">00:23s</div>
+	<div id="play"><a href="#">Listen to Audio</a></div>
+	
+  <div id="submit"><a href="#" class="submit">Submit</a></div>
+
+</div>
+
+  <audio id='audio' src="../sample.oga" style="display:none" controls>
+  </audio>
+</body>
+</html>
