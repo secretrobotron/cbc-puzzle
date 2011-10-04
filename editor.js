@@ -105,6 +105,7 @@
 
           var leftHandle_md = function( event ){
             elemRect = elem.getClientRects()[0];
+            mouseOffset = getOffset( event.clientX );
             lastLeft = elemRect.left;
             handles.left.moving = true;
             window.addEventListener( "mousemove", leftHandle_mm, false );
@@ -115,7 +116,7 @@
             if ( handles.left.moving ) {
               var newLeft = event.clientX;
               if ( newLeft >= 0 && newLeft < ( elemRect.left + elemRect.width ) ) {
-                elem.style.width = ( elemRect.left - newLeft ) + elemRect.width;
+                elem.style.width = ( ( elemRect.left - newLeft ) - mouseOffset ) + elemRect.width;
                 elem.style.left = newLeft + "px"
                 left = newLeft;
               }
