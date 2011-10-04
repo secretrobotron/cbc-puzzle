@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <script>
+    </script>
+  </head>
+  <body>
+    <audio id="audio-sample" controls preload="auto" autobuffer="true">
+      <source src="sample.oga" />
+    </audio>
+    <canvas id="audio-canvas" width="500" height="100" ></canvas>
+    <script>
+      var audio = document.getElementById( 'audio-sample' ),
+          canvas = document.getElementById( 'audio-canvas' ),
+          ctx = canvas.getContext( '2d' ),
+          cw = canvas.width, ch = canvas.height, ci = 0;
+
+      ctx.fillStyle = "#c0c0c0";
+      ctx.fillRect( 0, 0, cw, ch );
+      ctx.translate( 0, ch/2 );
+
+      audio.addEventListener( 'loadedmetadata', function( e ) {
+        var channels = audio.mozChannels,
+            rate = audio.mozSampleRate,
+            frameBufferLength = audio.mozFrameBufferLength,
+            stepx = cw / Math.ceil( audio.duration * rate / frameBufferLength * channels ) / ( frameBufferLength );
+
+        function audioAvailable( event ) {
+          var samples = event.frameBuffer;
+              time = event.time;
+
+          ctx.fillStyle = "#000000";
+          ctx.beginPath();
+          for (var i = 0; i < frameBufferLength; i++) {
+            var s = samples[ i ]/2 * 50;
+            ctx.rect( ci, -s, 1, s );
+            ci += stepx;
+          } //for
+          ctx.fill();
+        } //audioAvailable
+        
+        audio.addEventListener( 'canplaythrough', function( e ) {
+          audio.addEventListener( 'MozAudioAvailable', audioAvailable, false );
+          audio.play();
+        }, false );
+      }, false );
+    </script>
+  </body>
+</html>

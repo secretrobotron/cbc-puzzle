@@ -1,0 +1,109 @@
+#targ {
+  height: 100px;
+  width: 500px;
+  position: relative;
+}
+
+.time-block {
+  position: absolute;
+  background-color: #00dd00;
+  height: 100%;
+  margin-top: 0p;
+  border: 0.5px solid black;
+  opacity: 0.4;
+  z-index: 3;
+}
+
+.time-block:hover {
+  cursor: pointer;
+}
+
+.handles {
+  background-color: #00bb00;
+  width: 12px;
+  z-index: 4;
+  opacity: 0.6;
+  height: 100%;
+  position: absolute;
+}
+
+.handles:hover {
+  cursor: pointer;
+  background-color: #00ff00;
+}
+
+.no-select {
+  user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+}
+
+.scrubber:hover{
+  cursor: pointer;
+}
+
+.scrubber {
+  width: 3px;
+  background-color: red;
+  height: 130%;
+  z-index: 5;
+  position: absolute;
+  top: -15%;
+}
+
+#audio-canvas {
+  position: absolute;
+  z-index: 1;
+}
+
+#prepare-div {
+  position: absolute;
+  z-index: 10;
+  background: rgba( 0, 0, 0, 0.5 );
+  text-align: center;
+  color: #fff;
+  width: 100%;
+  height: 100px;
+  font: 3em sans-serif;
+}
+
+#prepare-div div {
+  padding: 20px;
+}
+
+#controls {
+  position: relative;
+  height: 100px;
+}
+
+#controls canvas {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  display: none;
+}
+
+.time-block-highlight {
+  background-color: #aaff00;
+  text-align: center;
+}
+
+#editor {
+  width: 300px;
+}
+
+#editor input {
+  width: 100%;
+  display: none;
+}
+
+#output-textarea {
+  width: 500px;
+  height: 400px;
+}
+
+#output-render {
+  display: block;
+}
