@@ -1,6 +1,6 @@
 <html>
   <style type="text/css" >
-    #targ {
+    #container {
       height: 100px;
       width: 500px;
       position: relative;
@@ -42,7 +42,7 @@
       -o-user-select: none;
     }
 
-    .scrubber:hover{
+    .scrubber:hover {
       cursor: pointer;
     }
 
@@ -114,10 +114,7 @@
     <script src="editor.js" ></script>
   </head>
   <body>
-    <audio src="sample.oga" id="audio" preload="auto" style="width: 400px; visibility: hidden;" ></audio>
-    <br />
-
-    <div id="targ" >
+    <div id="container" >
       <canvas id="audio-canvas" width="500" height="100" ></canvas>
       <div id="prepare-div"><div>Preparing</div></div>
     </div>
@@ -131,6 +128,6 @@
       <input type="button" id="output-render" value="Render Output" />
       <textarea id="output-textarea"></textarea>
     </div>
-    <audio src="sample.oga" id="audio" preload="auto" ></audio>
+    <audio src="McLuhan-quote1.oga" id="audio" preload="auto" ></audio>
   </body>
 </html>
