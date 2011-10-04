@@ -32,7 +32,14 @@ var addClass = function( element, name ) {
 
 var winner = function() {
   console.log( "we have won" );
-}
+};
+
+var scrambler = function( items ) {
+  console.log( items );
+  items = items.sort( function( a, b ) {
+    return a > b && ( Math.random()*11 > 5 );
+  });
+};
 
 var Cbc = window.Cbc = function( target, itemBox, timeline ) {
 
@@ -40,6 +47,7 @@ var Cbc = window.Cbc = function( target, itemBox, timeline ) {
       timelineElement = this.timelineElement = document.getElementById( timeline ),
       itemBoxElement = this.itemBoxlLement= document.getElementById( itemBox ),
       playBtn = document.getElementById( "play" ),
+      submitBtn = document.getElementById( "submit" ),
       events = this.events = [],
       sortedEvents = [],
       playingEvents = this.playingEvents = {},
@@ -128,13 +136,35 @@ var Cbc = window.Cbc = function( target, itemBox, timeline ) {
 
     for ( var i = 0; i < events.length; i++ ) {
 
+      events[ i ].stop();
+    }
+
+    playingIndex = 0;
+    var children = timelineElement.children;
+    getNextChild( children );
+  }, false );
+
+  submitBtn.addEventListener( "click", function( event ) {
+
+    var children = timelineElement.children,
+        correctItems = 0, 
+        childsChild;
+
+    sortedEvents = sortedEvents.sort( function(a,b) {
+      return a > b;
+    });
+
+    for ( var i = 0; i < events.length; i++ ) {
+
       childsChild = children[ i ].children.length && children[ i ].children.item( 0 ).id;
 
+      var cbcEvent = document.getElementById( childsChild );
       if ( children[ i ].children.length && playingEvents[ childsChild ].start === sortedEvents[ i ] ) {
         correctItems++;
-        var cbcEvent = document.getElementById( childsChild );
         addClass( cbcEvent, "cbc-puzzle-correctNode" );
         cbcEvent.draggable = false;
+      } else if ( children[ i ].children.length ) {
+        itemBoxElement.appendChild( cbcEvent ); 
       }
 
       events[ i ].stop();
@@ -142,12 +172,9 @@ var Cbc = window.Cbc = function( target, itemBox, timeline ) {
 
     if ( correctItems === children.length ) {
       winner();
-    } 
+    }
 
-    playingIndex = 0;
-    var children = timelineElement.children;
-    getNextChild( children );
-  }, false );
+  }, false ); 
 
   itemBoxElement.addEventListener( "drop", function( event ) {
 
@@ -252,6 +279,7 @@ var Cbc = window.Cbc = function( target, itemBox, timeline ) {
     }, false );
 
     target.appendChild( eventDiv );
+    scrambler( itemBoxElement.children );
   }
 }
 })();
