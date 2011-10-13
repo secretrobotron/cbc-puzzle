@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="cbc-puzzle.css"></link>
+    <script src="cbc-puzzle.js"></script>
+    <script type="application/json" id="source-data">
+      [{"text":"a monk","start":0,"end":2.0798117906708677},{"text":"asked bosan","start":2.020145,"end":4.158367159158264},{"text":"what is buddha","start":4.098217621829132,"end":7.9083767608165285},{"text":"masagin","start":10.983062,"end":15.03684761164566},{"text":"tosan says","start":7.9083767608165285,"end":10.974676349158264}]
+    </script>
+    <script>
+      document.addEventListener( "DOMContentLoaded", function( event ) {
+        var playButton = document.getElementById( 'play' ),
+            submitButton = document.getElementById( 'submit' );
+
+        var cbc = new CBCPuzzle({
+          audio: "audio", 
+          source: "items", 
+          target: "target",
+          json: document.getElementById( "source-data" ).innerHTML
+        });
+
+        playButton.addEventListener( 'click', function( e ) {
+          cbc.play();
+        }, false );
+
+        submitButton.addEventListener( 'click', function( e ) {
+          console.log( cbc.submit() );
+        }, false );
+      }, false );
+    </script>
+  <head>
+  <body>
+    <div id="target" style="width:500px;height:100px;border:solid;">
+    </div>
+    <div id="items" style="width:500px;height:100px;border:solid">
+    </div>
+    <audio id='audio' src="sample.oga" controls></audio>
+    <button id="play">PLAY</button>
+    <button id="submit">SUBMIT</button>
+  </body>
+</html>
