@@ -96,13 +96,13 @@
       });
 
       targetDiv.addEventListener( "dragover", function( e ) {
-        addClass( this, "cbc-puzzle-highlight" );
+        addClass( targetDiv, "cbc-puzzle-highlight" );
         e.preventDefault();
         e.dataTransfer.dropeffect = "copy";
       }, false );
 
       targetDiv.addEventListener( "dragleave", function( e ) {
-        removeClass( this, "cbc-puzzle-highlight" );
+        removeClass( targetDiv, "cbc-puzzle-highlight" );
       }, false);
 
       targetDiv.addEventListener( "drop", function( e ) {
@@ -122,12 +122,21 @@
         that.playSource( thisSource );
       }, false );
 
-      sourceDiv.addEventListener( "dragstart", function( e ) {
+      function onDragStart( e ) {
         e.dataTransfer.effectAllowed = "copy";
         e.dataTransfer.setData( "Text", sourceDiv.id );
-      }, false );
+      } //onDragStart
+
+      sourceDiv.addEventListener( "dragstart", onDragStart, false );
 
       sourceDiv.draggable = true;
+
+      this.freeze = function() {
+        sourceDiv.draggable = false;
+        sourceDiv.removeEventListener( "dragstart", onDragStart, false );
+        addClass( targetDiv, "cbc-puzzle-correct" );
+      }; //freeze
+
     }; //Source
 
 
@@ -210,7 +219,10 @@
     this.submit = function() {
       var numCorrect = 0;
       for ( var i=0, l=sources.length; i<l; ++i ) {
-        numCorrect += sources[ i ].correct ? 1 : 0;
+        if ( sources[ i ].correct ) {
+          ++numCorrect;
+          sources[ i ].freeze();
+        }
       } //for
       return numCorrect === sources.length;
     }; //submit
@@ -258,7 +270,9 @@
       e.preventDefault();
       e.stopPropagation();
       var newItem = document.getElementById( e.dataTransfer.getData( "Text" ) );
-      sourceContainer.appendChild( newItem );
+      if ( newItem ) {
+        sourceContainer.appendChild( newItem );
+      } //if
     }, false );
 
     sourceContainer.addEventListener( "dragover", function( e ) {
