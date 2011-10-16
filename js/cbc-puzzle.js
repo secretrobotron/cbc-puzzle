@@ -18,7 +18,7 @@
       classes.splice( idx, 1 );
     }
     element.className = classes.join( " " );
-  };
+  }; //removeClass
 
   var addClass = function( element, name ) {
 
@@ -27,7 +27,7 @@
     if ( idx === -1 ) {
       element.className += name + " ";
     }
-  };
+  }; //addClass
 
   var CBCPuzzle = window.CBCPuzzle = function( options ) {
 
@@ -43,7 +43,6 @@
     var Loop = function( fn, stopCallback ) {
       var stopLoop = false;
       function update() {
-        console.log('f');
         fn();
         if ( !stopLoop ) {
           requestAnimFrame( update );

@@ -1,0 +1,71 @@
+#puzzleWrap {
+  width: 660px;
+  height: 330px;
+  padding-top: 20px;
+  background: url(../images/background.jpg) no-repeat;
+}
+
+#wordMix {
+  width: 590px;
+  height: 90px;
+  margin: 0 auto ;
+  border: 1px solid #000;
+  overflow: hidden;
+}
+
+#wordMix div {
+  float: left;
+  margin-right: 10px;
+}
+
+#wordTarget {
+  width: 590px;
+  height: 142px;
+  margin: 5px auto 10px;
+  border: 1px solid #000;
+}
+
+.cbc-puzzle-target {
+  float: left;
+  margin-left: 5px;
+  margin-bottom: 17px;
+  margin-top: 2px;
+  font-size: 16px;
+  min-width: 65px;
+  height: 35px;
+}
+
+.cbc-puzzle-source {
+  cursor: pointer;
+  float: left;
+  padding-top: 10px;
+  margin-right: 5px;
+  margin-bottom: 17px;
+  font-size: 16px;
+}
+
+#timer {
+  clear: both;
+  float: left;
+  margin-left: 40px;
+}
+
+#listen {
+  float: right;
+  margin-right: 40px;
+}
+
+a.submit {
+  clear: both;
+  display: block;
+  width: 134px;
+  height: 42px;
+  margin: 0 auto;
+  background: url(../images/btn-submit.png) no-repeat;
+  text-indent: -9999px;
+}
+
+audio {
+  display: none;
+}
+

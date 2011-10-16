@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<title>PAGE TITLE HERE</title>
+
+<link rel="stylesheet" type="text/css" href="css/layout.css" />
+<link rel="stylesheet" type="text/css" href="css/cbc-puzzle.css" />
+<script src="js/cbc-puzzle.js"></script>
+
+<script type="application/json" id="source-data-0">
+  [{"text":"a monk","start":0,"end":2.0798117906708677},{"text":"asked bosan","start":2.020145,"end":4.158367159158264},{"text":"what is buddha","start":4.098217621829132,"end":7.9083767608165285},{"text":"masagin","start":10.983062,"end":15.03684761164566},{"text":"tosan says","start":7.9083767608165285,"end":10.974676349158264}]
+</script>
+<script type="application/json" id="source-data-1">
+  [{"text":"a monk","start":0,"end":2.0798117906708677},{"text":"asked bosan","start":2.020145,"end":4.158367159158264},{"text":"what is buddha","start":4.098217621829132,"end":7.9083767608165285},{"text":"masagin","start":10.983062,"end":15.03684761164566},{"text":"tosan says","start":7.9083767608165285,"end":10.974676349158264}]
+</script>
+<script type="application/json" id="source-data-2">
+  [{"text":"a monk","start":0,"end":2.0798117906708677},{"text":"asked bosan","start":2.020145,"end":4.158367159158264},{"text":"what is buddha","start":4.098217621829132,"end":7.9083767608165285},{"text":"masagin","start":10.983062,"end":15.03684761164566},{"text":"tosan says","start":7.9083767608165285,"end":10.974676349158264}]
+</script>
+<script type="application/json" id="source-data-3">
+  [{"text":"a monk","start":0,"end":2.0798117906708677},{"text":"asked bosan","start":2.020145,"end":4.158367159158264},{"text":"what is buddha","start":4.098217621829132,"end":7.9083767608165285},{"text":"masagin","start":10.983062,"end":15.03684761164566},{"text":"tosan says","start":7.9083767608165285,"end":10.974676349158264}]
+</script>
+<script type="application/json" id="source-data-4">
+  [{"text":"a monk","start":0,"end":2.0798117906708677},{"text":"asked bosan","start":2.020145,"end":4.158367159158264},{"text":"what is buddha","start":4.098217621829132,"end":7.9083767608165285},{"text":"masagin","start":10.983062,"end":15.03684761164566},{"text":"tosan says","start":7.9083767608165285,"end":10.974676349158264}]
+</script>
+
+<script>
+  document.addEventListener( "DOMContentLoaded", function( event ) {
+
+    var startDate = new Date( Date.parse( "October 24, 2011" ) ).getDate();
+        
+    var day = window.location.href.match( /day=([0-9]+)/ );
+    if ( day ) {
+      day = day[ 1 ];
+    }
+    else {
+      day = new Date().getDate() - startDate;
+      if ( day < 0 ) {
+        day = 0;
+      }
+    } //if
+
+    document.getElementById( "day" ).innerHTML = "Day: " + day;
+
+    var chosenJSON = document.getElementById( "source-data-" + day ).innerHTML,
+        startTime = Date.now(),
+        timerDiv = document.getElementById( "timer" ),
+        timerInterval = -1,
+        playButton = document.getElementById( 'play' ),
+        statusMessage = document.getElementById( 'status-message' ),
+        submitButton = document.getElementById( 'submit' );
+
+    var cbc = new CBCPuzzle({
+      audio: "audio",
+      source: "wordMix",
+      target: "wordTarget",
+      json: chosenJSON
+    });
+
+    playButton.addEventListener( 'click', function( e ) {
+      cbc.play();
+    }, false );
+
+    submitButton.addEventListener( 'click', function( e ) {
+      if ( cbc.submit() ) {
+        statusMessage.innerHTML = "You win! ( " + timerDiv.innerHTML + ")";
+        clearInterval( timerInterval );
+      }
+      else {
+        statusMessage.innerHTML = "Try again :(";
+      }
+    }, false );
+
+    timerInterval = setInterval( function() {
+      var elapsedTime = ( Date.now() - startTime ) / 1000,
+          minutes = Math.floor( elapsedTime / 60 ),
+          seconds = Math.floor( elapsedTime ),
+          minutesString = minutes > 9 ? minutes : "0" + minutes,
+          secondsString = seconds > 9 ? seconds : "0" + seconds,
+          timeString = minutesString + ":" + secondsString;
+      timerDiv.innerHTML = timeString;
+    }, 1000 );
+
+  }, false );
+</script>
+</head>
+
+<body>
+
+  <h3 id="day"></h3>
+  <div id="puzzleWrap">
+    <div id="wordMix"></div>
+    <div id="wordTarget"></div>
+    <div id="timer">&nbsp;</div>
+    <div id="play"><a href="#">Listen to Audio</a></div>
+    <div id="submit"><a href="#" class="submit">Submit</a></div>
+  </div>
+  <h1 id="status-message"></h1>
+
+  <audio id='audio' controls>
+    <source src="audio/1.oga" />
+  </audio>
+
+</body>
+</html>

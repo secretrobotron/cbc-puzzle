@@ -5,13 +5,16 @@
   user-select: none;
 }
 
+/*
 .cbc-puzzle-source {
   cursor: pointer;
   float: left;
   margin-left: 3px;
   margin-right: 3px;
 }
+*/
 
+/*
 .cbc-puzzle-target {
   width: 65px;
   height: 44px;
@@ -23,9 +26,10 @@
   background-color: #c0c0c0;
   border: 1px solid #000;
 }
+*/
 
 .cbc-puzzle-no-highlight {
-  background-color: #c0c0c0;
+  background-color: rgba(100, 100, 100, 0.1);
 }
 .cbc-puzzle-highlight {
   background-color: gold;
