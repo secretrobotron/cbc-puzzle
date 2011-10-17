@@ -258,14 +258,26 @@
     }; //prepare
 
     if ( jsonBlob ) {
-      jsonBlob = JSON.parse( jsonBlob ).data;
+      jsonBlob = JSON.parse( jsonBlob );
       var sourceElement = document.createElement( "source" );
       sourceElement.src = jsonBlob.audio;
       audioElement.appendChild( sourceElement );
-      for ( var i=0, l=jsonBlob.length; i<l; ++i ) {
-        this.addSource( new Source( jsonBlob[ i ] ) );
-      } //for
-      this.prepare();
+      document.body.appendChild( audioElement );
+      audioElement.load();
+      //audioElement.setAttribute( "controls", "true" );
+      //audioElement.style.display = "block";
+      function ready() {
+        var blobData = jsonBlob.data;
+        for ( var i=0, l=blobData.length; i<l; ++i ) {
+          that.addSource( new Source( blobData[ i ] ) );
+        } //for
+        that.prepare();
+        if ( options.ready ) {
+          options.ready();
+        }
+        audioElement.removeEventListener( 'canplaythrough', ready, false );
+      } //ready
+      audioElement.addEventListener( 'canplaythrough', ready, false );
     } //if
 
     sourceContainer.addEventListener( "drop", function( e ) {

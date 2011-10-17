@@ -11,7 +11,7 @@
 <script src="js/cbc-puzzle.js"></script>
 
 <script type="application/json" id="source-data-0">
-  {"audio":"../audio/1.oga", "data":[{"text":"a monk","start":0,"end":2.0798117906708677},{"text":"asked bosan","start":2.020145,"end":4.158367159158264},{"text":"what is buddha","start":4.098217621829132,"end":7.9083767608165285},{"text":"masagin","start":10.983062,"end":15.03684761164566},{"text":"tosan says","start":7.9083767608165285,"end":10.974676349158264}]}
+  {"audio":"audio/1.oga", "data":[{"text":"a monk","start":0,"end":2.0798117906708677},{"text":"asked bosan","start":2.020145,"end":4.158367159158264},{"text":"what is buddha","start":4.098217621829132,"end":7.9083767608165285},{"text":"masagin","start":10.983062,"end":15.03684761164566},{"text":"tosan says","start":7.9083767608165285,"end":10.974676349158264}]}
 </script>
 
 <script>
@@ -44,7 +44,10 @@
       audio: "audio",
       source: "wordMix",
       target: "wordTarget",
-      json: chosenJSON
+      json: chosenJSON,
+      ready: function() {
+        document.getElementById( "loading-overlay" ).style.display = "none";
+      }
     });
 
     playButton.addEventListener( 'click', function( e ) {
@@ -84,6 +87,7 @@
     <div id="timer">&nbsp;</div>
     <div id="play"><a href="#">Listen to Audio</a></div>
     <div id="submit"><a href="#" class="submit">Submit</a></div>
+    <div id="loading-overlay"><span>Loading...</span></div>
   </div>
   <h1 id="status-message"></h1>
 
