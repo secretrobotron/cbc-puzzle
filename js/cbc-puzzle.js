@@ -280,6 +280,8 @@
       var sourceElement = document.createElement( "source" );
       sourceElement.src = jsonBlob.audio;
       audioElement.appendChild( sourceElement );
+      audioElement.setAttribute( "preload", "auto" );
+      audioElement.setAttribute( "autobuffer", "true" );
       document.body.appendChild( audioElement );
       audioElement.load();
       //audioElement.setAttribute( "controls", "true" );
