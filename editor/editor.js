@@ -324,7 +324,7 @@
     var editMode = false;
 
     function deleteKeyPress( e ) {
-      if ( e.which === 46 || e.which === 8 ) {
+      if ( e.which === 100 ) {
         var idx = timeBlocks.indexOf( that );
         if ( idx > -1 ) {
           timeBlocks.splice( idx, 1 );
@@ -334,16 +334,17 @@
           toggleEditMode( false );
         } //if
       } //if
-    } //deleteKeyDown
+    } //deleteKeyPress
 
     function toggleEditMode( state ) {
       if ( state ) {
         editorInput.style.display = "block";
         editorInput.focus();
+        window.removeEventListener( 'keypress', deleteKeyPress, false );
       }
       else {
         editorInput.style.display = "none";
-        window.removeEventListener( 'keypress', deleteKeyPress, false );
+        window.addEventListener( 'keypress', deleteKeyPress, false );
       }
       editMode = state;
     } //toggleEditMode
@@ -491,10 +492,15 @@
 
     document.getElementById( 'output-render' ).addEventListener( 'click', function( e ) {
       var textArea = document.getElementById( 'output-textarea' ),
-          outputObj = [];
+          outputArray = [],
+          outputObj;
       for ( var i=0; i<timeBlocks.length; ++i ) {
-        outputObj.push( timeBlocks[ i ].output );
+        outputArray.push( timeBlocks[ i ].output );
       }
+      outputObj = {
+        audio: document.getElementById( 'audio' ).src,
+        data: outputArray
+      };
       textArea.value = JSON.stringify( outputObj );
     }, false );
 
