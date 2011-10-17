@@ -11,19 +11,7 @@
 <script src="js/cbc-puzzle.js"></script>
 
 <script type="application/json" id="source-data-0">
-  [{"text":"a monk","start":0,"end":2.0798117906708677},{"text":"asked bosan","start":2.020145,"end":4.158367159158264},{"text":"what is buddha","start":4.098217621829132,"end":7.9083767608165285},{"text":"masagin","start":10.983062,"end":15.03684761164566},{"text":"tosan says","start":7.9083767608165285,"end":10.974676349158264}]
-</script>
-<script type="application/json" id="source-data-1">
-  [{"text":"a monk","start":0,"end":2.0798117906708677},{"text":"asked bosan","start":2.020145,"end":4.158367159158264},{"text":"what is buddha","start":4.098217621829132,"end":7.9083767608165285},{"text":"masagin","start":10.983062,"end":15.03684761164566},{"text":"tosan says","start":7.9083767608165285,"end":10.974676349158264}]
-</script>
-<script type="application/json" id="source-data-2">
-  [{"text":"a monk","start":0,"end":2.0798117906708677},{"text":"asked bosan","start":2.020145,"end":4.158367159158264},{"text":"what is buddha","start":4.098217621829132,"end":7.9083767608165285},{"text":"masagin","start":10.983062,"end":15.03684761164566},{"text":"tosan says","start":7.9083767608165285,"end":10.974676349158264}]
-</script>
-<script type="application/json" id="source-data-3">
-  [{"text":"a monk","start":0,"end":2.0798117906708677},{"text":"asked bosan","start":2.020145,"end":4.158367159158264},{"text":"what is buddha","start":4.098217621829132,"end":7.9083767608165285},{"text":"masagin","start":10.983062,"end":15.03684761164566},{"text":"tosan says","start":7.9083767608165285,"end":10.974676349158264}]
-</script>
-<script type="application/json" id="source-data-4">
-  [{"text":"a monk","start":0,"end":2.0798117906708677},{"text":"asked bosan","start":2.020145,"end":4.158367159158264},{"text":"what is buddha","start":4.098217621829132,"end":7.9083767608165285},{"text":"masagin","start":10.983062,"end":15.03684761164566},{"text":"tosan says","start":7.9083767608165285,"end":10.974676349158264}]
+  {"audio":"../audio/1.oga", "data":[{"text":"a monk","start":0,"end":2.0798117906708677},{"text":"asked bosan","start":2.020145,"end":4.158367159158264},{"text":"what is buddha","start":4.098217621829132,"end":7.9083767608165285},{"text":"masagin","start":10.983062,"end":15.03684761164566},{"text":"tosan says","start":7.9083767608165285,"end":10.974676349158264}]}
 </script>
 
 <script>
@@ -76,7 +64,7 @@
     timerInterval = setInterval( function() {
       var elapsedTime = ( Date.now() - startTime ) / 1000,
           minutes = Math.floor( elapsedTime / 60 ),
-          seconds = Math.floor( elapsedTime ),
+          seconds = Math.floor( elapsedTime - minutes * 60 ),
           minutesString = minutes > 9 ? minutes : "0" + minutes,
           secondsString = seconds > 9 ? seconds : "0" + seconds,
           timeString = minutesString + ":" + secondsString;
@@ -98,10 +86,6 @@
     <div id="submit"><a href="#" class="submit">Submit</a></div>
   </div>
   <h1 id="status-message"></h1>
-
-  <audio id='audio' controls>
-    <source src="audio/1.oga" />
-  </audio>
 
 </body>
 </html>

@@ -31,7 +31,7 @@
 
   var CBCPuzzle = window.CBCPuzzle = function( options ) {
 
-    var audioElement = document.getElementById( options.audio ),
+    var audioElement = document.createElement( "audio" ),
         targetContainer = document.getElementById( options.target ),
         sourceContainer = document.getElementById( options.source ),
         jsonBlob = options.json,
@@ -258,7 +258,10 @@
     }; //prepare
 
     if ( jsonBlob ) {
-      jsonBlob = JSON.parse( jsonBlob );
+      jsonBlob = JSON.parse( jsonBlob ).data;
+      var sourceElement = document.createElement( "source" );
+      sourceElement.src = jsonBlob.audio;
+      audioElement.appendChild( sourceElement );
       for ( var i=0, l=jsonBlob.length; i<l; ++i ) {
         this.addSource( new Source( jsonBlob[ i ] ) );
       } //for
