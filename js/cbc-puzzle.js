@@ -80,6 +80,20 @@
         sourceMap[ sourceDiv.id ] = this;
       }; //prepare
 
+      this.judge = function() {
+        if ( targetDiv.children.length > 0 && targetDiv.children[ 0 ] === sourceDiv ) {
+          thisSource.freeze();
+          return 1;
+        }
+        else if ( targetDiv.children.length === 0 ) {
+          return -1;
+        }
+        else {
+          thisSource.markIncorrect();
+          return 0;
+        }
+      }; //judge
+
       Object.defineProperty( this, "start", { get: function() { return start; } } );
       Object.defineProperty( this, "end", { get: function() { return end; } } );
       Object.defineProperty( this, "text", { get: function() { return text; } } );
@@ -87,7 +101,7 @@
       Object.defineProperty( this, "targetElement", { get: function() { return targetDiv; } } );
       Object.defineProperty( this, "correct", {
         get: function() {
-          return targetDiv.children.length > 0 && targetDiv.children[ 0 ] === sourceDiv;
+          return thisSource.judge();
         }
       });
       Object.defineProperty( this, "currentSource", {
@@ -106,6 +120,7 @@
 
       targetDiv.addEventListener( "dragleave", function( e ) {
         removeClass( targetDiv, "cbc-puzzle-highlight" );
+        removeClass( targetDiv, "cbc-puzzle-incorrect" );
       }, false);
 
       targetDiv.addEventListener( "drop", function( e ) {
@@ -131,7 +146,6 @@
       } //onDragStart
 
       sourceDiv.addEventListener( "dragstart", onDragStart, false );
-
       sourceDiv.draggable = true;
 
       this.freeze = function() {
@@ -139,6 +153,10 @@
         sourceDiv.removeEventListener( "dragstart", onDragStart, false );
         addClass( targetDiv, "cbc-puzzle-correct" );
       }; //freeze
+
+      this.markIncorrect = function() {
+        addClass( targetDiv, "cbc-puzzle-incorrect" );
+      }; //markIncorrect
 
     }; //Source
 
@@ -222,10 +240,7 @@
     this.submit = function() {
       var numCorrect = 0;
       for ( var i=0, l=sources.length; i<l; ++i ) {
-        if ( sources[ i ].correct ) {
-          ++numCorrect;
-          sources[ i ].freeze();
-        }
+        numCorrect += sources[ i ].judge();
       } //for
       return numCorrect === sources.length;
     }; //submit
@@ -284,8 +299,6 @@
       audioElement.setAttribute( "autobuffer", "true" );
       document.body.appendChild( audioElement );
       audioElement.load();
-      //audioElement.setAttribute( "controls", "true" );
-      //audioElement.style.display = "block";
       function ready() {
         var blobData = jsonBlob.data;
         for ( var i=0, l=blobData.length; i<l; ++i ) {

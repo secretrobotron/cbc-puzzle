@@ -40,4 +40,7 @@
 .cbc-puzzle-correct {
   background-color: green;
 }
+.cbc-puzzle-incorrect {
+  background-color: red;
+}
 
