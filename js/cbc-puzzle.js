@@ -63,18 +63,22 @@
           text = options.text,
           thisSource = this;
 
+      this.order = -1;
+
       var sourceDiv = document.createElement( "div" );
-      sourceDiv.id = "cbc-puzzle-source-" + sources.length;
       sourceDiv.innerHTML = options.text;
-      sourceDiv.setAttribute( "data-f", text );
       addClass( sourceDiv, "cbc-puzzle-source" );
-      sourceMap[ sourceDiv.id ] = this;
 
       var targetDiv = document.createElement( "div" );
-      targetDiv.id = "cbc-puzzle-target-" + sources.length;
       addClass( targetDiv, "cbc-puzzle-target" );
       addClass( targetDiv, "cbc-puzzle-no-highlight" );
-      targetDiv.setAttribute( "data-f", text );
+
+      this.prepare = function( index ) {
+        thisSource.order = index;
+        sourceDiv.id = "cbc-puzzle-source-" + index;
+        targetDiv.id = "cbc-puzzle-target-" + index;
+        sourceMap[ sourceDiv.id ] = this;
+      }; //prepare
 
       Object.defineProperty( this, "start", { get: function() { return start; } } );
       Object.defineProperty( this, "end", { get: function() { return end; } } );
@@ -253,8 +257,22 @@
       });
       that.scramble();
       for ( var i=0, l=sources.length; i<l; ++i ) {
+        sources[ i ].prepare( i );
         targetContainer.appendChild( sources[ i ].targetElement );
       } //for
+
+      if ( options.order ) {
+        var order = options.order.split(",");
+        for ( var i=0; i<order.length; ++i ) {
+          console.log( order[ i ]);
+          if ( order[ i ] > -1 ) {
+            var target = document.getElementById( "cbc-puzzle-target-" + i );
+            var item = document.getElementById( "cbc-puzzle-source-" + order[ i ] );
+            target.appendChild( item );
+          } //if
+        } //for
+      } //if
+
     }; //prepare
 
     if ( jsonBlob ) {
@@ -275,9 +293,14 @@
         if ( options.ready ) {
           options.ready();
         }
-        audioElement.removeEventListener( 'canplaythrough', ready, false );
       } //ready
-      audioElement.addEventListener( 'canplaythrough', ready, false );
+
+      var checkInterval = setInterval(function() {
+        if ( audioElement.readyState === 4 ) {
+          clearInterval( checkInterval );
+          ready();
+        } //if
+      }, 100);
     } //if
 
     sourceContainer.addEventListener( "drop", function( e ) {
@@ -293,6 +316,20 @@
       e.preventDefault();
       e.dataTransfer.dropeffect = "copy";
     }, false );
+
+    this.getCurrentOrderURL = function() {
+      var currentSources = [];
+      for ( var i=0, l=sources.length; i<l; ++i ) {
+        var currentSource = sources[ i ].currentSource;
+        if ( currentSource ) {
+          currentSources.push( currentSource.order );
+        }
+        else {
+          currentSources.push( "-1" );
+        } //if
+      } //for
+      return currentSources.join( "," );
+    }; //getCurrentOrderURL
 
   }; //CBCPuzzle
 

@@ -38,7 +38,13 @@
         timerInterval = -1,
         playButton = document.getElementById( 'play' ),
         statusMessage = document.getElementById( 'status-message' ),
+        tweetButton = document.getElementById( 'tweet' ),
         submitButton = document.getElementById( 'submit' );
+
+    var order = window.location.href.match( /order=([0-9\-,]+)/ );
+    if ( order && order.length > 0 ) {
+      order = order[ 1 ];
+    }
 
     var cbc = new CBCPuzzle({
       audio: "audio",
@@ -47,8 +53,13 @@
       json: chosenJSON,
       ready: function() {
         document.getElementById( "loading-overlay" ).style.display = "none";
-      }
+      },
+      order: order
     });
+
+    tweetButton.addEventListener( 'click', function( e ) {
+      statusMessage.innerHTML = "day=" + day + "&order=" + cbc.getCurrentOrderURL();
+    }, false );
 
     playButton.addEventListener( 'click', function( e ) {
       cbc.play();
@@ -86,7 +97,8 @@
     <div id="wordTarget"></div>
     <div id="timer">&nbsp;</div>
     <div id="play"><a href="#">Listen to Audio</a></div>
-    <div id="submit"><a href="#" class="submit">Submit</a></div>
+    <div id="tweet"><a href="#">URL</a></div>
+    <div><a href="#" id="submit" class="submit">Submit</a></div>
     <div id="loading-overlay"><span>Loading...</span></div>
   </div>
   <h1 id="status-message"></h1>

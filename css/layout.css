@@ -51,6 +51,16 @@
   margin-left: 40px;
 }
 
+#play {
+  float: left;
+  margin-left: 5px;
+}
+
+#tweet {
+  float: left;
+  margin-left: 5px;
+}
+
 #listen {
   float: right;
   margin-right: 40px;
